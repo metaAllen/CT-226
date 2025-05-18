@@ -706,6 +706,9 @@
                 }
             });
 
+            messageInput.addEventListener('focus', adjustChatContainerHeight);
+            messageInput.addEventListener('blur', adjustChatContainerHeight);
+
             const sendButton = document.getElementById('send-button');
             sendButton.addEventListener('click', function() {
                 const messageInput = document.getElementById('message-input');
