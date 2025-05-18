@@ -11,6 +11,7 @@
             padding: 0;
             box-sizing: border-box;
             overflow: hidden;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
         }
         body {
             width: 100vw;
@@ -35,6 +36,8 @@
             border: 1.5px solid rgba(255,255,255,0.08);
             backdrop-filter: blur(4px);
             box-sizing: border-box;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
         .header {
             width: 100%;
