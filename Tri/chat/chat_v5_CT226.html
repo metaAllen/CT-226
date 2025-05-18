@@ -35,7 +35,7 @@
             border: 1.5px solid rgba(255,255,255,0.08);
             backdrop-filter: blur(4px);
             box-sizing: border-box;
-            padding-top: calc(env(safe-area-inset-top) + 24px);
+            padding-top: env(safe-area-inset-top);
         }
         .header {
             width: 100%;
@@ -719,6 +719,21 @@
             document.getElementById('toCalendarBtn').onclick = function() {
                 window.location.href = '../clendar/clendar.html';
             };
+
+            // 動態調整 chat-container 高度，讓鍵盤彈出時 input-area 不被遮住
+            function adjustChatContainerHeight() {
+                const chatContainer = document.querySelector('.chat-container');
+                if (window.visualViewport) {
+                    chatContainer.style.height = window.visualViewport.height + 'px';
+                } else {
+                    chatContainer.style.height = window.innerHeight + 'px';
+                }
+            }
+            window.addEventListener('resize', adjustChatContainerHeight);
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', adjustChatContainerHeight);
+            }
+            adjustChatContainerHeight();
         });
     </script>
 </body>
