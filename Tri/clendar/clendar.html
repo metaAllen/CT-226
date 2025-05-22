@@ -37,6 +37,7 @@
       backdrop-filter: blur(4px);
       box-sizing: border-box;
       padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
     .header {
       width: 100%;
@@ -84,7 +85,7 @@
     .day {
       background: rgba(255,255,255,0.08);
       border-radius: 16px;
-      aspect-ratio: 1/1;
+      aspect-ratio: 1/1.2;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -94,7 +95,7 @@
       position: relative;
       min-width: 0;
       max-width: 100%;
-      min-height: 32px;
+      min-height: 110px;
       overflow: visible;
       box-sizing: border-box;
       cursor: pointer;
@@ -107,9 +108,9 @@
       background: rgba(0,188,212,0.13);
     }
     .event {
-      margin-top: 6px;
-      padding: 4px 6px;
-      font-size: 13px;
+      margin-top: 4px;
+      padding: 3px 6px;
+      font-size: 12px;
       border-radius: 8px;
       color: #fff;
       cursor: pointer;
@@ -118,16 +119,19 @@
       text-overflow: ellipsis;
       font-weight: bold;
       box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      max-width: 90%;
     }
     .event.running {
-      background: linear-gradient(90deg, #ff5252 0%, #ff867f 100%);
+      background: linear-gradient(90deg, #99ccff 0%, #ff867f 100%);
+      color: #222;
     }
     .event.cycling {
-      background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+      background: linear-gradient(90deg, #99ffcc 0%, #38f9d7 100%);
       color: #222;
     }
     .event.swimming {
-      background: linear-gradient(90deg, #42a5f5 0%, #00bcd4 100%);
+      background: linear-gradient(90deg, #42a5f5 0%, #99ffff 100%);
+      color: #222;
     }
     .modal {
       position: fixed;
@@ -224,17 +228,20 @@
         border-radius: 0;
         padding: 0;
         margin: 0 auto;
+        padding-bottom: env(safe-area-inset-bottom);
       }
       #calendar {
         padding: 0;
         grid-template-columns: repeat(7, 1fr);
         gap: 2px;
         max-width: 100vw;
+        margin-bottom: env(safe-area-inset-bottom);
       }
       .modal-content {
         width: 98vw;
         min-width: 0;
         border-radius: 0 0 18px 18px;
+        margin-bottom: env(safe-area-inset-bottom);
       }
     }
     .calendar-actions {
@@ -245,6 +252,7 @@
       padding: 16px 16px 0 16px;
       background: transparent;
       box-sizing: border-box;
+      margin-bottom: env(safe-area-inset-bottom);
     }
     .calendar-actions button {
       flex: 1 1 0;
