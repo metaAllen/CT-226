@@ -98,6 +98,7 @@
             padding: 16px 16px 10px 16px;
             width: 100%;
             background: transparent;
+            border-bottom: none;
         }
         .button-container button {
             width: 100%;
@@ -189,6 +190,7 @@
             padding: 0 16px 10px 16px;
             width: 100%;
             background: transparent;
+            border-bottom: none;
         }
         .button-row button {
             flex: 1 1 0;
@@ -237,7 +239,7 @@
             <span style="font-size:14px;">我今天騎</span>
             </button>
             <button id="running-button">
-            <img src="../images/run.png" alt="跑步" style="width:55px;height:55px;display:block;margin:0 auto 15px auto;" />
+            <img src="../images/run.png" alt="跑步" style="width:55px;height:55px;display:block;margin:0 auto 16px auto;" />
             <span style="font-size:14px;">我今天跑</span>
         </div>
         <div class="input-area">
@@ -689,52 +691,54 @@
             });
 
             const messageInput = document.getElementById('message-input');
-            messageInput.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    const messageText = messageInput.value.trim();
-                    console.log('User input:', messageText); // Debugging line
-                    if (messageText) {
-                        addMessageToChat(messageText, true);
-                        messageInput.value = '';
-                        
-                        if (expectingSwimResponse && /\d|K/i.test(messageText)) {
-                            console.log('Condition met, sending response for swimming'); // Debugging line
-                            addMessageToChat('您真棒', false);
-                            const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
-                            if (km > 0) saveSwimToCalendar(km);
-                            expectingSwimResponse = false;
-                        }
-                        if (expectingCyclingResponse && /\d|K/i.test(messageText)) {
-                            console.log('Condition met, sending response for cycling'); // Debugging line
-                            addMessageToChat('您真棒', false);
-                            const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
-                            if (km > 0) saveBikeToCalendar(km);
-                            expectingCyclingResponse = false;
-                        }
-                        if (expectingRunningResponse && /\d+/.test(messageText)) {
-                            console.log('Condition met, sending response for running'); // Debugging line
-                            addMessageToChat('您真棒', false);
-                            const km = parseFloat(messageText.match(/\d+/)[0]);
-                            saveRunToCalendar(km);
-                            expectingRunningResponse = false;
-                        }
-                    }
-                }
-            });
-
-            messageInput.addEventListener('focus', () => {
-                setTimeout(adjustChatContainerHeight, 300);
-            });
-            messageInput.addEventListener('blur', adjustChatContainerHeight);
-
             const sendButton = document.getElementById('send-button');
-            sendButton.addEventListener('click', function() {
-                const messageInput = document.getElementById('message-input');
-                const messageText = messageInput.value.trim();
+
+            function handleMessageInput(messageText) {
                 if (messageText) {
                     addMessageToChat(messageText, true);
                     messageInput.value = '';
+                    
+                    if (expectingSwimResponse && /\d|K/i.test(messageText)) {
+                        console.log('Condition met, sending response for swimming'); // Debugging line
+                        addMessageToChat('您真棒', false);
+                        const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
+                        if (km > 0) {
+                            saveSwimToCalendar(km);
+                            console.log('Saved swim distance:', km); // Debugging line
+                        }
+                        expectingSwimResponse = false;
+                    }
+                    if (expectingCyclingResponse && /\d|K/i.test(messageText)) {
+                        console.log('Condition met, sending response for cycling'); // Debugging line
+                        addMessageToChat('您真棒', false);
+                        const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
+                        if (km > 0) {
+                            saveBikeToCalendar(km);
+                            console.log('Saved bike distance:', km); // Debugging line
+                        }
+                        expectingCyclingResponse = false;
+                    }
+                    if (expectingRunningResponse && /\d+/.test(messageText)) {
+                        console.log('Condition met, sending response for running'); // Debugging line
+                        addMessageToChat('您真棒', false);
+                        const km = parseFloat(messageText.match(/\d+/)[0]);
+                        if (km > 0) {
+                            saveRunToCalendar(km);
+                            console.log('Saved run distance:', km); // Debugging line
+                        }
+                        expectingRunningResponse = false;
+                    }
                 }
+            }
+
+            messageInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    handleMessageInput(messageInput.value.trim());
+                }
+            });
+
+            sendButton.addEventListener('click', function() {
+                handleMessageInput(messageInput.value.trim());
             });
 
             document.getElementById('toCalendarBtn').onclick = function() {
