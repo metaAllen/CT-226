@@ -72,6 +72,7 @@
             opacity: 0;
             transform: translateY(20px);
             animation: fadeInUp 0.5s forwards;
+            margin: 0 12px;
         }
         .message.bot {
             background: linear-gradient(90deg, #555 0%, #607d8b 100%);
@@ -99,6 +100,8 @@
             width: 100%;
             background: transparent;
             border-bottom: none;
+            margin: 0;
+            box-sizing: border-box;
         }
         .button-container button {
             width: 100%;
@@ -127,6 +130,8 @@
             gap: 10px;
             border-top: 1px solid #2d3748;
             padding-bottom: env(safe-area-inset-bottom);
+      
+      
         }
         .input-area input {
             flex: 1;
@@ -178,8 +183,8 @@
                 padding: 10px 4vw 8px 4vw;
             }
             .button-container, .input-area {
-                padding-left: 4vw;
-                padding-right: 4vw;
+                padding-left: 16px;
+                padding-right: 16px;
             }
         }
         .button-row {
@@ -191,6 +196,8 @@
             width: 100%;
             background: transparent;
             border-bottom: none;
+            margin: 0;
+            box-sizing: border-box;
         }
         .button-row button {
             flex: 1 1 0;
@@ -207,6 +214,7 @@
             box-shadow: 0 2px 8px rgba(0,188,212,0.10);
             transition: background 0.3s, transform 0.2s;
             margin: 0;
+  
         }
         .button-row button:hover {
             background: linear-gradient(90deg, #078282 0%, #12214e 100%);
@@ -232,15 +240,15 @@
         <div class="button-row">
             <button id="swimming-button">
                 <img src="../images/swim.png" alt="游泳" style="width:60px;height:60px;display:block;margin:0 auto 2px auto;" />
-                <span style="font-size:14px;">我今天游</span>
+                <span style="font-size:14px;">我今天游了</span>
             </button>
             <button id="cycling-button">
             <img src="../images/bike.png" alt="騎車" style="width:67px;height:67px;display:block;margin:0 auto -7px auto;" />
-            <span style="font-size:14px;">我今天騎</span>
+            <span style="font-size:14px;">我今天騎了</span>
             </button>
             <button id="running-button">
             <img src="../images/run.png" alt="跑步" style="width:45px;height:45px;display:block;margin:0 auto 16px auto;" />
-            <span style="font-size:14px;">我今天跑</span>
+            <span style="font-size:14px;">我今天跑了</span>
         </div>
         <div class="input-area">
             <input type="text" id="message-input" placeholder="你今天運動了嗎?">
@@ -676,18 +684,24 @@
             }
 
             swimmingButton.addEventListener('click', () => {
-                addMessageToChat('您今天游了幾 K呢?', false);
                 expectingSwimResponse = true;
+                expectingCyclingResponse = false;
+                expectingRunningResponse = false;
+                addMessageToChat('您今天游了幾 K呢?', false);
             });
 
             cyclingButton.addEventListener('click', () => {
-                addMessageToChat('您今天騎了幾 K呢?', false);
+                expectingSwimResponse = false;
                 expectingCyclingResponse = true;
+                expectingRunningResponse = false;
+                addMessageToChat('您今天騎了幾 K呢?', false);
             });
 
             runningButton.addEventListener('click', () => {
-                addMessageToChat('您今天跑了幾 K呢?', false);
+                expectingSwimResponse = false;
+                expectingCyclingResponse = false;
                 expectingRunningResponse = true;
+                addMessageToChat('您今天跑了幾 K呢?', false);
             });
 
             const messageInput = document.getElementById('message-input');
@@ -699,32 +713,32 @@
                     messageInput.value = '';
                     
                     if (expectingSwimResponse && /\d|K/i.test(messageText)) {
-                        console.log('Condition met, sending response for swimming'); // Debugging line
-                        addMessageToChat('您真棒', false);
                         const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
                         if (km > 0) {
                             saveSwimToCalendar(km);
-                            console.log('Saved swim distance:', km); // Debugging line
+                            addMessageToChat(`您今天游了 ${km} 公里，真棒！`, false);
+                        } else {
+                            addMessageToChat('請輸入有效的距離', false);
                         }
                         expectingSwimResponse = false;
                     }
-                    if (expectingCyclingResponse && /\d|K/i.test(messageText)) {
-                        console.log('Condition met, sending response for cycling'); // Debugging line
-                        addMessageToChat('您真棒', false);
+                    else if (expectingCyclingResponse && /\d|K/i.test(messageText)) {
                         const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
                         if (km > 0) {
                             saveBikeToCalendar(km);
-                            console.log('Saved bike distance:', km); // Debugging line
+                            addMessageToChat(`您今天騎了 ${km} 公里，真棒！`, false);
+                        } else {
+                            addMessageToChat('請輸入有效的距離', false);
                         }
                         expectingCyclingResponse = false;
                     }
-                    if (expectingRunningResponse && /\d+/.test(messageText)) {
-                        console.log('Condition met, sending response for running'); // Debugging line
-                        addMessageToChat('您真棒', false);
-                        const km = parseFloat(messageText.match(/\d+/)[0]);
+                    else if (expectingRunningResponse && /\d|K/i.test(messageText)) {
+                        const km = parseFloat(messageText.match(/\d+/)?.[0] || 0);
                         if (km > 0) {
                             saveRunToCalendar(km);
-                            console.log('Saved run distance:', km); // Debugging line
+                            addMessageToChat(`您今天跑了 ${km} 公里，真棒！`, false);
+                        } else {
+                            addMessageToChat('請輸入有效的距離', false);
                         }
                         expectingRunningResponse = false;
                     }
