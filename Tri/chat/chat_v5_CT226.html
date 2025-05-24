@@ -240,15 +240,15 @@
         <div class="button-row">
             <button id="swimming-button">
                 <img src="../images/swim.png" alt="游泳" style="width:60px;height:60px;display:block;margin:0 auto 2px auto;" />
-                <span style="font-size:14px;">我今天游了</span>
+                <span style="font-size:14px;">今天游了</span>
             </button>
             <button id="cycling-button">
             <img src="../images/bike.png" alt="騎車" style="width:67px;height:67px;display:block;margin:0 auto -7px auto;" />
-            <span style="font-size:14px;">我今天騎了</span>
+            <span style="font-size:14px;">今天騎了</span>
             </button>
             <button id="running-button">
             <img src="../images/run.png" alt="跑步" style="width:45px;height:45px;display:block;margin:0 auto 16px auto;" />
-            <span style="font-size:14px;">我今天跑了</span>
+            <span style="font-size:14px;">今天跑了</span>
         </div>
         <div class="input-area">
             <input type="text" id="message-input" placeholder="你今天運動了嗎?">
@@ -633,6 +633,46 @@
                 messageDiv.appendChild(bubbleDiv);
                 chatBox.appendChild(messageDiv);
                 chatBox.scrollTop = chatBox.scrollHeight;
+
+                // 保存消息到 localStorage
+                saveMessageToHistory(messageText, isUser);
+            }
+
+            // 保存消息到歷史記錄
+            function saveMessageToHistory(messageText, isUser) {
+                let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                chatHistory.push({
+                    text: messageText,
+                    isUser: isUser,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            }
+
+            // 加載歷史消息
+            function loadChatHistory() {
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                
+                // 如果是第一次訪問（沒有歷史記錄），顯示歡迎訊息
+                if (chatHistory.length === 0) {
+                    const welcomeMessage = `歡迎使用《三項都會累》的課表！\n這份訓練課表會在你懷疑人生之前，\n先貼心幫你安排好每週該怎麼累得有意義。\n請勇敢按下「今日課表」或「本週課表」\n享受這段鐵人旅程吧！! !`;
+                    addMessageToChat(welcomeMessage, false);
+                } else {
+                    // 如果有歷史記錄，顯示所有歷史消息
+                    chatHistory.forEach(msg => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.classList.add('message', msg.isUser ? 'user' : 'bot');
+
+                        const bubbleDiv = document.createElement('div');
+                        bubbleDiv.classList.add('bubble', msg.isUser ? 'user' : 'bot');
+                        bubbleDiv.style.whiteSpace = 'pre-wrap';
+                        bubbleDiv.textContent = msg.text;
+
+                        messageDiv.appendChild(bubbleDiv);
+                        chatBox.appendChild(messageDiv);
+                    });
+                }
+                chatBox.scrollTop = chatBox.scrollHeight;
             }
 
             dailyScheduleButton.addEventListener('click', () => {
@@ -773,6 +813,9 @@
                 window.visualViewport.addEventListener('resize', adjustChatContainerHeight);
             }
             adjustChatContainerHeight();
+
+            // 在頁面加載時加載歷史記錄
+            loadChatHistory();
         });
     </script>
 </body>
